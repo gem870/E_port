@@ -12,7 +12,7 @@ const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
 export const ProfileBody = () => {
   const color = useMotionValue(COLORS_TOP[0]);
   const borderColor = useMotionValue(COLORS_TOP[0]); // Border color animation
-  const [currentColor, setCurrentColor] = useState(COLORS_TOP[0]); 
+  const [currentColor, setCurrentColor] = useState(COLORS_TOP[0]);
 
   useEffect(() => {
     const controls = animate(color, COLORS_TOP, {
@@ -33,7 +33,7 @@ export const ProfileBody = () => {
       controls.stop();
       borderControls.stop();
     };
-  }, []);
+  }, [color, borderColor]); // ✅ Fixed: Added dependencies
 
   // Update state whenever `color` changes
   useMotionValueEvent(color, "change", (latest) => {

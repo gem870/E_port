@@ -43,13 +43,13 @@ export const Navbar = () => {
       controls.stop();
       borderControls.stop();
     };
-  }, []); // ✅ Empty dependency array ensures it runs only once
+  }, [color, borderColor]); // ✅ Fixed: Added missing dependencies
 
   useMotionValueEvent(color, "change", (latest) => {
     setCurrentColor(latest);
   });
 
-  const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 30% 0%, #020303 30%, ${currentColor})`;
+  const backgroundImage = useMotionTemplate`radial-gradient(120% 120% at 20% 0%, #020303 20%, ${currentColor})`;
   const borderColorStyle = useMotionTemplate`${borderColor}`;
 
   const toggleNav = () => {

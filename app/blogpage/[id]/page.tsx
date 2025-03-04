@@ -9,9 +9,17 @@ import { motion } from "framer-motion";
 
 const MONGODB_URL = process.env.NEXT_PUBLIC_BACKEND_BLOG_URL as string;
 
+interface Blog {
+  id: string;
+  title: string;
+  description: string;
+  programmingLanguage: string;
+  code: string;
+}
+
 export default function BlogPage() {
-  const params = useParams(); // ✅ Correct way to access params
-  const [blog, setBlog] = useState<any>(null);
+  const params = useParams();
+  const [blog, setBlog] = useState<Blog | null>(null); // ✅ Typed state
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +30,7 @@ export default function BlogPage() {
 
     const fetchBlog = async () => {
       try {
-        const res = await fetch(`${MONGODB_URL}/api/blogs/${params.id}`, {
+        const res = await fetch(`${MONGODB_URL}/api/blogs/${params.id as string}`, {
           cache: "no-store",
         });
 
@@ -30,7 +38,7 @@ export default function BlogPage() {
           notFound();
         }
 
-        const data = await res.json();
+        const data: Blog = await res.json(); // ✅ Ensure type correctness
         setBlog(data);
       } catch (error) {
         console.error("Error fetching blog:", error);
@@ -41,7 +49,7 @@ export default function BlogPage() {
     };
 
     fetchBlog();
-  }, [params.id]); // ✅ Corrected params access
+  }, [params.id]);
 
   useEffect(() => {
     if (blog) {
@@ -49,7 +57,6 @@ export default function BlogPage() {
     }
   }, [blog]);
 
-  // ✅ Fixed Copy Code Function
   const copyCode = () => {
     const codeBlock = document.getElementById("codeBlock") as HTMLElement;
     if (!codeBlock?.innerText) {
@@ -57,21 +64,18 @@ export default function BlogPage() {
       return;
     }
 
-    // Ensure `navigator.clipboard` is available
     if (navigator?.clipboard && typeof navigator.clipboard.writeText === "function") {
       navigator.clipboard.writeText(codeBlock.innerText)
         .then(() => alert("Code copied to clipboard!"))
         .catch((err) => {
           console.error("Clipboard API failed, using fallback.", err);
           fallbackCopy(codeBlock.innerText);
-          
         });
     } else {
       fallbackCopy(codeBlock.innerText);
     }
   };
 
-  // Fallback method using an invisible textarea
   const fallbackCopy = (text: string) => {
     const textarea = document.createElement("textarea");
     textarea.value = text;
@@ -98,7 +102,7 @@ export default function BlogPage() {
       </div>
 
       <div className="xl:flex">
-        <div className=" xl:w-[30%] xl:py-4 xl:pr-4">
+        <div className="xl:w-[30%] xl:py-4 xl:pr-4">
           <h1 className="text-[#22ac99] text-2xl">{blog?.title}</h1>
           <p
             className="text-gray-500"
@@ -107,10 +111,11 @@ export default function BlogPage() {
         </div>
 
         <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.9 }}
-            className=" xl:w-[70%] relative p-1 rounded-lg shadow-lg">
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.9 }}
+          className="xl:w-[70%] relative p-1 rounded-lg shadow-lg"
+        >
           <button
             onClick={copyCode}
             className="absolute top-2 right-4 bg-gray-200 bg-opacity-60 text-gray-600 px-4 py-2 mt-2 rounded-md shadow-lg text-xs hover:bg-gray-300"
@@ -118,7 +123,7 @@ export default function BlogPage() {
             Copy
           </button>
 
-          <pre id="codeBlock" className=" text-white p-1 rounded-lg overflow-x-auto">
+          <pre id="codeBlock" className="text-white p-1 rounded-lg overflow-x-auto">
             <code className={`language-${blog?.programmingLanguage || "plaintext"}`}>
               {blog?.code || "Loading content..."}
             </code>
