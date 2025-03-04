@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Blog from "@/lib/models/Blog";
 
-// Handle GET request to fetch a blog by ID
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectToDatabase();
@@ -12,8 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ message: "Blog ID is required" }, { status: 400 });
     }
 
-    const blog = await Blog.findById(id);
-
+    const blog = await Blog.findById(id).lean(); // `.lean()` optimizes MongoDB queries
     if (!blog) {
       return NextResponse.json({ message: "Blog not found" }, { status: 404 });
     }
