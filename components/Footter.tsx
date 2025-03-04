@@ -46,7 +46,7 @@ export const Footter = () => {
       <motion.section
         style={{ backgroundImage, borderRadius: 10 }} // ✅ Fixed: Renamed `radius` to `borderRadius`
         id="contact"
-        className="w-full max-w-4xl py-4 px-6 text-center mt-10 rounded-sm md:rounded-md"
+        className="w-full max-w-4xl py-4 px-6 text-center mt-10 rounded-t-sm md:rounded-t-md"
       >
         <h2 className="text-3xl font-bold">Get in Touch</h2>
         <p className="mt-4 text-gray-400">Feel free to reach out to me for collaborations or job opportunities.</p>

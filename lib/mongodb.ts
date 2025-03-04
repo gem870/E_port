@@ -6,20 +6,20 @@ if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable in .env");
 }
 
-// Declare a global cache type
+// Define global caching for database connection
 interface MongooseCache {
   conn: mongoose.Connection | null;
   promise: Promise<mongoose.Connection> | null;
 }
 
-// Create a global variable to store the cache
-declare global {
-  var mongooseCache: MongooseCache | undefined;
+// Use "const" instead of "let" because it is not reassigned
+const globalWithMongoose = global as typeof globalThis & { mongooseCache?: MongooseCache };
+
+if (!globalWithMongoose.mongooseCache) {
+  globalWithMongoose.mongooseCache = { conn: null, promise: null };
 }
 
-// Use the global cache or initialize it
-const cached: MongooseCache = global.mongooseCache || { conn: null, promise: null };
-global.mongooseCache = cached;
+const cached = globalWithMongoose.mongooseCache;
 
 export async function connectToDatabase() {
   if (cached.conn) {
