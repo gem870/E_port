@@ -1,5 +1,4 @@
-import multer from "multer";
-//import path from "path";
+import multer, { FileFilterCallback } from "multer";
 import { Request } from "express";
 
 // Configure storage for uploaded files
@@ -12,18 +11,14 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter with proper TypeScript types
-const fileFilter = (
-  req: Request, 
-  file: Express.Multer.File, 
-  cb: (error: Error | null, acceptFile: boolean) => void
-) => {
+// Corrected file filter function
+const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
   const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "video/mp4"];
   
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true); // Accept file
   } else {
-    cb(new Error("Only images and videos are allowed"), false); // Reject file
+    cb(new Error("Only images and videos are allowed")); // Reject file with an error
   }
 };
 
